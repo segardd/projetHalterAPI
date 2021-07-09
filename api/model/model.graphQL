@@ -1,0 +1,39 @@
+type Query {
+  clubs: [Club]
+  club(id: ID, name: String): Club
+  competitors: [Competitor]
+  competitor(id: ID, name: String, firstname: String): Competitor
+}
+
+type Mutation {
+  addClub(
+    name: String
+    director: String
+    description: String
+    createDate: String
+  ): Club
+
+  addCompetitor(name: String
+  firstname: String
+  birthday: String
+  idClub: ID):Competitor
+}
+
+type Club {
+  id: ID
+  name: String
+  director: String
+  createDate: String
+  members: [Competitor]
+}
+
+type Competitor {
+  id: ID
+  name: String
+  firstname: String
+  birthday: Date
+  club: Club
+  firstAttempt: Int
+  secondAttempt: Int
+  thirdAttempt: Int
+}

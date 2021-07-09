@@ -1,0 +1,1356 @@
+type ValidationError implements ErrorInterface {
+  """Combined error message from all validators"""
+  message: String
+
+  """List of validator errors"""
+  errors: [ValidatorError!]
+}
+
+interface ErrorInterface {
+  """Generic error message"""
+  message: String
+}
+
+type ValidatorError {
+  """Validation error message"""
+  message: String
+
+  """Source of the validation error from the model path"""
+  path: String
+
+  """Field value which occurs the validation error"""
+  value: JSON
+
+  """
+  Input record idx in array which occurs the validation error. This `idx` is useful for createMany operation. For singular operations it always be 0. For *Many operations `idx` represents record index in array received from user.
+  """
+  idx: Int!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+type MongoError implements ErrorInterface {
+  """MongoDB error message"""
+  message: String
+
+  """MongoDB error code"""
+  code: Int
+}
+
+type RuntimeError implements ErrorInterface {
+  """Runtime error message"""
+  message: String
+}
+
+type Query {
+  ClubById(_id: MongoID!): Club
+  ClubByIds(_ids: [MongoID!]!, limit: Int = 100, sort: SortFindByIdsClubInput): [Club!]!
+  ClubOne(
+    """Filter by fields"""
+    filter: FilterFindOneClubInput
+    skip: Int
+    sort: SortFindOneClubInput
+  ): Club
+  ClubMany(
+    """Filter by fields"""
+    filter: FilterFindManyClubInput
+    skip: Int
+    limit: Int = 100
+    sort: SortFindManyClubInput
+  ): [Club!]!
+  ClubDataLoader(_id: MongoID!): Club
+  ClubDataLoaderMany(_ids: [MongoID!]!): [Club]!
+  ClubByIdLean(_id: MongoID!): Club
+  ClubByIdsLean(_ids: [MongoID!]!, limit: Int = 100, sort: SortFindByIdsClubInput): [Club!]!
+  ClubOneLean(
+    """Filter by fields"""
+    filter: FilterFindOneClubInput
+    skip: Int
+    sort: SortFindOneClubInput
+  ): Club
+  ClubManyLean(
+    """Filter by fields"""
+    filter: FilterFindManyClubInput
+    skip: Int
+    limit: Int = 100
+    sort: SortFindManyClubInput
+  ): [Club!]!
+  ClubDataLoaderLean(_id: MongoID!): Club
+  ClubDataLoaderManyLean(_ids: [MongoID!]!): [Club]!
+  ClubCount(
+    """Filter by fields"""
+    filter: FilterCountClubInput
+  ): Int
+  ClubConnection(
+    """Forward pagination argument for returning at most first edges"""
+    first: Int
+
+    """Forward pagination argument for returning at most first edges"""
+    after: String
+
+    """Backward pagination argument for returning at most last edges"""
+    last: Int
+
+    """Backward pagination argument for returning at most last edges"""
+    before: String
+
+    """Filter by fields"""
+    filter: FilterFindManyClubInput
+
+    """Sort argument for data ordering"""
+    sort: SortConnectionClubEnum = _ID_DESC
+  ): ClubConnection
+  ClubPagination(
+    """Page number for displaying"""
+    page: Int
+
+    """"""
+    perPage: Int = 20
+
+    """Filter by fields"""
+    filter: FilterFindManyClubInput
+    sort: SortFindManyClubInput
+  ): ClubPagination
+  CompetitorById(_id: MongoID!): Competitor
+  CompetitorByIds(_ids: [MongoID!]!, limit: Int = 100, sort: SortFindByIdsCompetitorInput): [Competitor!]!
+  CompetitorOne(
+    """Filter by fields"""
+    filter: FilterFindOneCompetitorInput
+    skip: Int
+    sort: SortFindOneCompetitorInput
+  ): Competitor
+  CompetitorMany(
+    """Filter by fields"""
+    filter: FilterFindManyCompetitorInput
+    skip: Int
+    limit: Int = 100
+    sort: SortFindManyCompetitorInput
+  ): [Competitor!]!
+  CompetitorDataLoader(_id: MongoID!): Competitor
+  CompetitorDataLoaderMany(_ids: [MongoID!]!): [Competitor]!
+  CompetitorByIdLean(_id: MongoID!): Competitor
+  CompetitorByIdsLean(_ids: [MongoID!]!, limit: Int = 100, sort: SortFindByIdsCompetitorInput): [Competitor!]!
+  CompetitorOneLean(
+    """Filter by fields"""
+    filter: FilterFindOneCompetitorInput
+    skip: Int
+    sort: SortFindOneCompetitorInput
+  ): Competitor
+  CompetitorManyLean(
+    """Filter by fields"""
+    filter: FilterFindManyCompetitorInput
+    skip: Int
+    limit: Int = 100
+    sort: SortFindManyCompetitorInput
+  ): [Competitor!]!
+  CompetitorDataLoaderLean(_id: MongoID!): Competitor
+  CompetitorDataLoaderManyLean(_ids: [MongoID!]!): [Competitor]!
+  CompetitorCount(
+    """Filter by fields"""
+    filter: FilterCountCompetitorInput
+  ): Int
+  CompetitorConnection(
+    """Forward pagination argument for returning at most first edges"""
+    first: Int
+
+    """Forward pagination argument for returning at most first edges"""
+    after: String
+
+    """Backward pagination argument for returning at most last edges"""
+    last: Int
+
+    """Backward pagination argument for returning at most last edges"""
+    before: String
+
+    """Filter by fields"""
+    filter: FilterFindManyCompetitorInput
+
+    """Sort argument for data ordering"""
+    sort: SortConnectionCompetitorEnum = _ID_DESC
+  ): CompetitorConnection
+  CompetitorPagination(
+    """Page number for displaying"""
+    page: Int
+
+    """"""
+    perPage: Int = 20
+
+    """Filter by fields"""
+    filter: FilterFindManyCompetitorInput
+    sort: SortFindManyCompetitorInput
+  ): CompetitorPagination
+}
+
+type Club {
+  name: String
+  director: String
+  description: String
+  createDate: String
+  members: [MongoID]
+  _id: MongoID!
+  membersDetails(limit: Int = 100, sort: SortFindByIdsCompetitorInput): [Competitor!]!
+}
+
+"""
+The `ID` scalar type represents a unique MongoDB identifier in collection. MongoDB by default use 12-byte ObjectId value (https://docs.mongodb.com/manual/reference/bson-types/#objectid). But MongoDB also may accepts string or integer as correct values for _id field.
+"""
+scalar MongoID
+
+type Competitor {
+  id: MongoID
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  firstAttempt: Float
+  secondAttempt: Float
+  thirdAttempt: Float
+  _id: MongoID!
+  clubInfo: Club
+}
+
+scalar Date
+
+enum SortFindByIdsCompetitorInput {
+  _ID_ASC
+  _ID_DESC
+  ID_ASC
+  ID_DESC
+}
+
+enum SortFindByIdsClubInput {
+  _ID_ASC
+  _ID_DESC
+}
+
+""""""
+input FilterFindOneClubInput {
+  name: String
+  director: String
+  description: String
+  createDate: String
+  members: [MongoID]
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterFindOneClubOperatorsInput
+  OR: [FilterFindOneClubInput!]
+  AND: [FilterFindOneClubInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterFindOneClubOperatorsInput {
+  _id: FilterFindOneClub_idOperatorsInput
+}
+
+input FilterFindOneClub_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortFindOneClubInput {
+  _ID_ASC
+  _ID_DESC
+}
+
+""""""
+input FilterFindManyClubInput {
+  name: String
+  director: String
+  description: String
+  createDate: String
+  members: [MongoID]
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterFindManyClubOperatorsInput
+  OR: [FilterFindManyClubInput!]
+  AND: [FilterFindManyClubInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterFindManyClubOperatorsInput {
+  _id: FilterFindManyClub_idOperatorsInput
+}
+
+input FilterFindManyClub_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortFindManyClubInput {
+  _ID_ASC
+  _ID_DESC
+}
+
+""""""
+input FilterCountClubInput {
+  name: String
+  director: String
+  description: String
+  createDate: String
+  members: [MongoID]
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterCountClubOperatorsInput
+  OR: [FilterCountClubInput!]
+  AND: [FilterCountClubInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterCountClubOperatorsInput {
+  _id: FilterCountClub_idOperatorsInput
+}
+
+input FilterCountClub_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+"""A connection to a list of items."""
+type ClubConnection {
+  """Total object count."""
+  count: Int!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """Information to aid in pagination."""
+  edges: [ClubEdge!]!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+"""An edge in a connection."""
+type ClubEdge {
+  """The item at the end of the edge"""
+  node: Club!
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+enum SortConnectionClubEnum {
+  _ID_DESC
+  _ID_ASC
+}
+
+"""List of items with pagination."""
+type ClubPagination {
+  """Total object count."""
+  count: Int
+
+  """Array of objects."""
+  items: [Club!]
+
+  """Information to aid in pagination."""
+  pageInfo: PaginationInfo!
+}
+
+type PaginationInfo {
+  currentPage: Int!
+  perPage: Int!
+  pageCount: Int
+  itemCount: Int
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+}
+
+""""""
+input FilterFindOneCompetitorInput {
+  id: MongoID
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  firstAttempt: Float
+  secondAttempt: Float
+  thirdAttempt: Float
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterFindOneCompetitorOperatorsInput
+  OR: [FilterFindOneCompetitorInput!]
+  AND: [FilterFindOneCompetitorInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterFindOneCompetitorOperatorsInput {
+  id: FilterFindOneCompetitorIdOperatorsInput
+  _id: FilterFindOneCompetitor_idOperatorsInput
+}
+
+input FilterFindOneCompetitorIdOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+input FilterFindOneCompetitor_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortFindOneCompetitorInput {
+  _ID_ASC
+  _ID_DESC
+  ID_ASC
+  ID_DESC
+}
+
+""""""
+input FilterFindManyCompetitorInput {
+  id: MongoID
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  firstAttempt: Float
+  secondAttempt: Float
+  thirdAttempt: Float
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterFindManyCompetitorOperatorsInput
+  OR: [FilterFindManyCompetitorInput!]
+  AND: [FilterFindManyCompetitorInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterFindManyCompetitorOperatorsInput {
+  id: FilterFindManyCompetitorIdOperatorsInput
+  _id: FilterFindManyCompetitor_idOperatorsInput
+}
+
+input FilterFindManyCompetitorIdOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+input FilterFindManyCompetitor_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortFindManyCompetitorInput {
+  _ID_ASC
+  _ID_DESC
+  ID_ASC
+  ID_DESC
+}
+
+""""""
+input FilterCountCompetitorInput {
+  id: MongoID
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  firstAttempt: Float
+  secondAttempt: Float
+  thirdAttempt: Float
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterCountCompetitorOperatorsInput
+  OR: [FilterCountCompetitorInput!]
+  AND: [FilterCountCompetitorInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterCountCompetitorOperatorsInput {
+  id: FilterCountCompetitorIdOperatorsInput
+  _id: FilterCountCompetitor_idOperatorsInput
+}
+
+input FilterCountCompetitorIdOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+input FilterCountCompetitor_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+"""A connection to a list of items."""
+type CompetitorConnection {
+  """Total object count."""
+  count: Int!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """Information to aid in pagination."""
+  edges: [CompetitorEdge!]!
+}
+
+"""An edge in a connection."""
+type CompetitorEdge {
+  """The item at the end of the edge"""
+  node: Competitor!
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+enum SortConnectionCompetitorEnum {
+  _ID_DESC
+  _ID_ASC
+}
+
+"""List of items with pagination."""
+type CompetitorPagination {
+  """Total object count."""
+  count: Int
+
+  """Array of objects."""
+  items: [Competitor!]
+
+  """Information to aid in pagination."""
+  pageInfo: PaginationInfo!
+}
+
+type Mutation {
+  """
+  Create one document with mongoose defaults, setters, hooks and validation
+  """
+  ClubCreateOne(record: CreateOneClubInput!): CreateOneClubPayload
+
+  """
+  Creates Many documents with mongoose defaults, setters, hooks and validation
+  """
+  ClubCreateMany(records: [CreateManyClubInput!]!): CreateManyClubPayload
+
+  """
+  Update one document: 1) Retrieve one document by findById. 2) Apply updates to mongoose document. 3) Mongoose applies defaults, setters, hooks and validation. 4) And save it.
+  """
+  ClubUpdateById(_id: MongoID!, record: UpdateByIdClubInput!): UpdateByIdClubPayload
+
+  """
+  Update one document: 1) Retrieve one document via findOne. 2) Apply updates to mongoose document. 3) Mongoose applies defaults, setters, hooks and validation. 4) And save it.
+  """
+  ClubUpdateOne(
+    record: UpdateOneClubInput!
+
+    """Filter by fields"""
+    filter: FilterUpdateOneClubInput
+    sort: SortUpdateOneClubInput
+    skip: Int
+  ): UpdateOneClubPayload
+
+  """
+  Update many documents without returning them: Use Query.update mongoose method. Do not apply mongoose defaults, setters, hooks and validation. 
+  """
+  ClubUpdateMany(
+    record: UpdateManyClubInput!
+
+    """Filter by fields"""
+    filter: FilterUpdateManyClubInput
+    sort: SortUpdateManyClubInput
+    skip: Int
+    limit: Int = 100
+  ): UpdateManyClubPayload
+
+  """
+  Remove one document: 1) Retrieve one document and remove with hooks via findByIdAndRemove. 2) Return removed document.
+  """
+  ClubRemoveById(_id: MongoID!): RemoveByIdClubPayload
+
+  """
+  Remove one document: 1) Remove with hooks via findOneAndRemove. 2) Return removed document.
+  """
+  ClubRemoveOne(
+    """Filter by fields"""
+    filter: FilterRemoveOneClubInput
+    sort: SortRemoveOneClubInput
+  ): RemoveOneClubPayload
+
+  """
+  Remove many documents without returning them: Use Query.remove mongoose method. Do not apply mongoose defaults, setters, hooks and validation. 
+  """
+  ClubRemoveMany(
+    """Filter by fields"""
+    filter: FilterRemoveManyClubInput!
+    limit: Int = 100
+  ): RemoveManyClubPayload
+
+  """
+  Create one document with mongoose defaults, setters, hooks and validation
+  """
+  CompetitorCreateOne(record: CreateOneCompetitorInput!): CreateOneCompetitorPayload
+
+  """
+  Creates Many documents with mongoose defaults, setters, hooks and validation
+  """
+  CompetitorCreateMany(records: [CreateManyCompetitorInput!]!): CreateManyCompetitorPayload
+
+  """
+  Update one document: 1) Retrieve one document by findById. 2) Apply updates to mongoose document. 3) Mongoose applies defaults, setters, hooks and validation. 4) And save it.
+  """
+  CompetitorUpdateById(_id: MongoID!, record: UpdateByIdCompetitorInput!): UpdateByIdCompetitorPayload
+
+  """
+  Update one document: 1) Retrieve one document via findOne. 2) Apply updates to mongoose document. 3) Mongoose applies defaults, setters, hooks and validation. 4) And save it.
+  """
+  CompetitorUpdateOne(
+    record: UpdateOneCompetitorInput!
+
+    """Filter by fields"""
+    filter: FilterUpdateOneCompetitorInput
+    sort: SortUpdateOneCompetitorInput
+    skip: Int
+  ): UpdateOneCompetitorPayload
+
+  """
+  Update many documents without returning them: Use Query.update mongoose method. Do not apply mongoose defaults, setters, hooks and validation. 
+  """
+  CompetitorUpdateMany(
+    record: UpdateManyCompetitorInput!
+
+    """Filter by fields"""
+    filter: FilterUpdateManyCompetitorInput
+    sort: SortUpdateManyCompetitorInput
+    skip: Int
+    limit: Int = 100
+  ): UpdateManyCompetitorPayload
+
+  """
+  Remove one document: 1) Retrieve one document and remove with hooks via findByIdAndRemove. 2) Return removed document.
+  """
+  CompetitorRemoveById(_id: MongoID!): RemoveByIdCompetitorPayload
+
+  """
+  Remove one document: 1) Remove with hooks via findOneAndRemove. 2) Return removed document.
+  """
+  CompetitorRemoveOne(
+    """Filter by fields"""
+    filter: FilterRemoveOneCompetitorInput
+    sort: SortRemoveOneCompetitorInput
+  ): RemoveOneCompetitorPayload
+
+  """
+  Remove many documents without returning them: Use Query.remove mongoose method. Do not apply mongoose defaults, setters, hooks and validation. 
+  """
+  CompetitorRemoveMany(
+    """Filter by fields"""
+    filter: FilterRemoveManyCompetitorInput!
+    limit: Int = 100
+  ): RemoveManyCompetitorPayload
+}
+
+type CreateOneClubPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Created document"""
+  record: Club
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input CreateOneClubInput {
+  name: String
+  director: String
+  description: String
+  createDate: String
+  members: [MongoID]
+}
+
+type CreateManyClubPayload {
+  """Documents IDs"""
+  recordIds: [MongoID!]!
+
+  """Created documents"""
+  records: [Club!]
+
+  """Number of created documents"""
+  createdCount: Int!
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input CreateManyClubInput {
+  name: String
+  director: String
+  description: String
+  createDate: String
+  members: [MongoID]
+}
+
+type UpdateByIdClubPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Updated document"""
+  record: Club
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input UpdateByIdClubInput {
+  name: String
+  director: String
+  description: String
+  createDate: String
+  members: [MongoID]
+}
+
+type UpdateOneClubPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Updated document"""
+  record: Club
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input UpdateOneClubInput {
+  name: String
+  director: String
+  description: String
+  createDate: String
+  members: [MongoID]
+}
+
+""""""
+input FilterUpdateOneClubInput {
+  name: String
+  director: String
+  description: String
+  createDate: String
+  members: [MongoID]
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterUpdateOneClubOperatorsInput
+  OR: [FilterUpdateOneClubInput!]
+  AND: [FilterUpdateOneClubInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterUpdateOneClubOperatorsInput {
+  _id: FilterUpdateOneClub_idOperatorsInput
+}
+
+input FilterUpdateOneClub_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortUpdateOneClubInput {
+  _ID_ASC
+  _ID_DESC
+}
+
+type UpdateManyClubPayload {
+  """Affected documents number"""
+  numAffected: Int
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input UpdateManyClubInput {
+  name: String
+  director: String
+  description: String
+  createDate: String
+  members: [MongoID]
+}
+
+""""""
+input FilterUpdateManyClubInput {
+  name: String
+  director: String
+  description: String
+  createDate: String
+  members: [MongoID]
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterUpdateManyClubOperatorsInput
+  OR: [FilterUpdateManyClubInput!]
+  AND: [FilterUpdateManyClubInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterUpdateManyClubOperatorsInput {
+  _id: FilterUpdateManyClub_idOperatorsInput
+}
+
+input FilterUpdateManyClub_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortUpdateManyClubInput {
+  _ID_ASC
+  _ID_DESC
+}
+
+type RemoveByIdClubPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Removed document"""
+  record: Club
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+type RemoveOneClubPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Removed document"""
+  record: Club
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input FilterRemoveOneClubInput {
+  name: String
+  director: String
+  description: String
+  createDate: String
+  members: [MongoID]
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterRemoveOneClubOperatorsInput
+  OR: [FilterRemoveOneClubInput!]
+  AND: [FilterRemoveOneClubInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterRemoveOneClubOperatorsInput {
+  _id: FilterRemoveOneClub_idOperatorsInput
+}
+
+input FilterRemoveOneClub_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortRemoveOneClubInput {
+  _ID_ASC
+  _ID_DESC
+}
+
+type RemoveManyClubPayload {
+  """Affected documents number"""
+  numAffected: Int
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input FilterRemoveManyClubInput {
+  name: String
+  director: String
+  description: String
+  createDate: String
+  members: [MongoID]
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterRemoveManyClubOperatorsInput
+  OR: [FilterRemoveManyClubInput!]
+  AND: [FilterRemoveManyClubInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterRemoveManyClubOperatorsInput {
+  _id: FilterRemoveManyClub_idOperatorsInput
+}
+
+input FilterRemoveManyClub_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+type CreateOneCompetitorPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Created document"""
+  record: Competitor
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input CreateOneCompetitorInput {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  firstAttempt: Float
+  secondAttempt: Float
+  thirdAttempt: Float
+}
+
+type CreateManyCompetitorPayload {
+  """Documents IDs"""
+  recordIds: [MongoID!]!
+
+  """Created documents"""
+  records: [Competitor!]
+
+  """Number of created documents"""
+  createdCount: Int!
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input CreateManyCompetitorInput {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  firstAttempt: Float
+  secondAttempt: Float
+  thirdAttempt: Float
+}
+
+type UpdateByIdCompetitorPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Updated document"""
+  record: Competitor
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input UpdateByIdCompetitorInput {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  firstAttempt: Float
+  secondAttempt: Float
+  thirdAttempt: Float
+}
+
+type UpdateOneCompetitorPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Updated document"""
+  record: Competitor
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input UpdateOneCompetitorInput {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  firstAttempt: Float
+  secondAttempt: Float
+  thirdAttempt: Float
+}
+
+""""""
+input FilterUpdateOneCompetitorInput {
+  id: MongoID
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  firstAttempt: Float
+  secondAttempt: Float
+  thirdAttempt: Float
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterUpdateOneCompetitorOperatorsInput
+  OR: [FilterUpdateOneCompetitorInput!]
+  AND: [FilterUpdateOneCompetitorInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterUpdateOneCompetitorOperatorsInput {
+  id: FilterUpdateOneCompetitorIdOperatorsInput
+  _id: FilterUpdateOneCompetitor_idOperatorsInput
+}
+
+input FilterUpdateOneCompetitorIdOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+input FilterUpdateOneCompetitor_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortUpdateOneCompetitorInput {
+  _ID_ASC
+  _ID_DESC
+  ID_ASC
+  ID_DESC
+}
+
+type UpdateManyCompetitorPayload {
+  """Affected documents number"""
+  numAffected: Int
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input UpdateManyCompetitorInput {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  firstAttempt: Float
+  secondAttempt: Float
+  thirdAttempt: Float
+}
+
+""""""
+input FilterUpdateManyCompetitorInput {
+  id: MongoID
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  firstAttempt: Float
+  secondAttempt: Float
+  thirdAttempt: Float
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterUpdateManyCompetitorOperatorsInput
+  OR: [FilterUpdateManyCompetitorInput!]
+  AND: [FilterUpdateManyCompetitorInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterUpdateManyCompetitorOperatorsInput {
+  id: FilterUpdateManyCompetitorIdOperatorsInput
+  _id: FilterUpdateManyCompetitor_idOperatorsInput
+}
+
+input FilterUpdateManyCompetitorIdOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+input FilterUpdateManyCompetitor_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortUpdateManyCompetitorInput {
+  _ID_ASC
+  _ID_DESC
+  ID_ASC
+  ID_DESC
+}
+
+type RemoveByIdCompetitorPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Removed document"""
+  record: Competitor
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+type RemoveOneCompetitorPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Removed document"""
+  record: Competitor
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input FilterRemoveOneCompetitorInput {
+  id: MongoID
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  firstAttempt: Float
+  secondAttempt: Float
+  thirdAttempt: Float
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterRemoveOneCompetitorOperatorsInput
+  OR: [FilterRemoveOneCompetitorInput!]
+  AND: [FilterRemoveOneCompetitorInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterRemoveOneCompetitorOperatorsInput {
+  id: FilterRemoveOneCompetitorIdOperatorsInput
+  _id: FilterRemoveOneCompetitor_idOperatorsInput
+}
+
+input FilterRemoveOneCompetitorIdOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+input FilterRemoveOneCompetitor_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortRemoveOneCompetitorInput {
+  _ID_ASC
+  _ID_DESC
+  ID_ASC
+  ID_DESC
+}
+
+type RemoveManyCompetitorPayload {
+  """Affected documents number"""
+  numAffected: Int
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input FilterRemoveManyCompetitorInput {
+  id: MongoID
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  firstAttempt: Float
+  secondAttempt: Float
+  thirdAttempt: Float
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterRemoveManyCompetitorOperatorsInput
+  OR: [FilterRemoveManyCompetitorInput!]
+  AND: [FilterRemoveManyCompetitorInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterRemoveManyCompetitorOperatorsInput {
+  id: FilterRemoveManyCompetitorIdOperatorsInput
+  _id: FilterRemoveManyCompetitor_idOperatorsInput
+}
+
+input FilterRemoveManyCompetitorIdOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+input FilterRemoveManyCompetitor_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
