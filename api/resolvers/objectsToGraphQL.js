@@ -4,13 +4,17 @@ var {schemaComposer} = require( 'graphql-compose');
 var UniqueValidator = require( 'mongoose-unique-validator');
 var ClubSchema = require( './ClubSchema');
 var CompetitorSchema = require( './CompetitorSchema');
+var CompetitionSchema = require('./CompetitionSchema');
 
 const Competitor = mongoose.model('Competitor',CompetitorSchema);
 const Club = mongoose.model('Club',ClubSchema);
+const Competition = mongoose.model('Competition',CompetitionSchema);
 const customizationsOptions = {};
 //const CompetitorTC = composeMongoose(Competitor, customizationOptions);
 const ClubTC = composeMongoose(Club);
 const CompetitorTC = composeMongoose(Competitor);
+const CompetitionTC = composeMongoose(Competition);
+
 
 ClubTC.addRelation("membersDetails",{
     resolver: ()=>CompetitorTC.mongooseResolvers.findByIds(),
@@ -39,63 +43,40 @@ CompetitorTC.addRelation("clubInfo",{
     projection: {_id: 1,name: 1, director:1, createDate: 1, description: 1, members: 1}
 })
 
-schemaComposer.Query.addFields({
-    ClubById: ClubTC.mongooseResolvers.findById(),
-    ClubByIds: ClubTC.mongooseResolvers.findByIds(),
-    ClubOne: ClubTC.mongooseResolvers.findOne(),
-    ClubMany: ClubTC.mongooseResolvers.findMany(),
-    ClubDataLoader: ClubTC.mongooseResolvers.dataLoader(),
-    ClubDataLoaderMany: ClubTC.mongooseResolvers.dataLoaderMany(),
-    ClubByIdLean: ClubTC.mongooseResolvers.findById({ lean: true }),
-    ClubByIdsLean: ClubTC.mongooseResolvers.findByIds({ lean: true }),
-    ClubOneLean: ClubTC.mongooseResolvers.findOne({ lean: true }),
-    ClubManyLean: ClubTC.mongooseResolvers.findMany({ lean: true }),
-    ClubDataLoaderLean: ClubTC.mongooseResolvers.dataLoader({ lean: true }),
-    ClubDataLoaderManyLean: ClubTC.mongooseResolvers.dataLoaderMany({ lean: true }),
-    ClubCount: ClubTC.mongooseResolvers.count(),
-    ClubConnection: ClubTC.mongooseResolvers.connection(),
-    ClubPagination: ClubTC.mongooseResolvers.pagination(),
-  });
 
+var ObjectToGraphList = {'Club': ClubTC, 'Competitor': CompetitorTC,'Competition': CompetitionTC};
+console.log('LISTname: '+ObjectToGraphList[0])
+for (var key in ObjectToGraphList){
+  console.log('TAMER'+key)
   schemaComposer.Query.addFields({
-    CompetitorById: CompetitorTC.mongooseResolvers.findById(),
-    CompetitorByIds: CompetitorTC.mongooseResolvers.findByIds(),
-    CompetitorOne: CompetitorTC.mongooseResolvers.findOne(),
-    CompetitorMany: CompetitorTC.mongooseResolvers.findMany(),
-    CompetitorDataLoader: CompetitorTC.mongooseResolvers.dataLoader(),
-    CompetitorDataLoaderMany: CompetitorTC.mongooseResolvers.dataLoaderMany(),
-    CompetitorByIdLean: CompetitorTC.mongooseResolvers.findById({ lean: true }),
-    CompetitorByIdsLean: CompetitorTC.mongooseResolvers.findByIds({ lean: true }),
-    CompetitorOneLean: CompetitorTC.mongooseResolvers.findOne({ lean: true }),
-    CompetitorManyLean: CompetitorTC.mongooseResolvers.findMany({ lean: true }),
-    CompetitorDataLoaderLean: CompetitorTC.mongooseResolvers.dataLoader({ lean: true }),
-    CompetitorDataLoaderManyLean: CompetitorTC.mongooseResolvers.dataLoaderMany({ lean: true }),
-    CompetitorCount: CompetitorTC.mongooseResolvers.count(),
-    CompetitorConnection: CompetitorTC.mongooseResolvers.connection(),
-    CompetitorPagination: CompetitorTC.mongooseResolvers.pagination(),
-  });
-  
-  schemaComposer.Mutation.addFields({
-    ClubCreateOne: ClubTC.mongooseResolvers.createOne(),
-    ClubCreateMany: ClubTC.mongooseResolvers.createMany(),
-    ClubUpdateById: ClubTC.mongooseResolvers.updateById(),
-    ClubUpdateOne: ClubTC.mongooseResolvers.updateOne(),
-    ClubUpdateMany: ClubTC.mongooseResolvers.updateMany(),
-    ClubRemoveById: ClubTC.mongooseResolvers.removeById(),
-    ClubRemoveOne: ClubTC.mongooseResolvers.removeOne(),
-    ClubRemoveMany: ClubTC.mongooseResolvers.removeMany(),
+    [`${key}ById`]: ObjectToGraphList[key].mongooseResolvers.findById(),
+    [`${key}ByIds`]: ObjectToGraphList[key].mongooseResolvers.findByIds(),
+    [`${key}One`]: ObjectToGraphList[key].mongooseResolvers.findOne(),
+    [`${key}Many`]: ObjectToGraphList[key].mongooseResolvers.findMany(),
+    [`${key}DataLoader`]: ObjectToGraphList[key].mongooseResolvers.dataLoader(),
+    [`${key}DataLoaderMany`]: ObjectToGraphList[key].mongooseResolvers.dataLoaderMany(),
+    [`${key}ByIdLean`]: ObjectToGraphList[key].mongooseResolvers.findById({ lean: true }),
+    [`${key}ByIdsLean`]: ObjectToGraphList[key].mongooseResolvers.findByIds({ lean: true }),
+    [`${key}OneLean`]: ObjectToGraphList[key].mongooseResolvers.findOne({ lean: true }),
+    [`${key}ManyLean`]: ObjectToGraphList[key].mongooseResolvers.findMany({ lean: true }),
+    [`${key}DataLoaderLean`]: ObjectToGraphList[key].mongooseResolvers.dataLoader({ lean: true }),
+    [`${key}DataLoaderManyLean`]: ObjectToGraphList[key].mongooseResolvers.dataLoaderMany({ lean: true }),
+    [`${key}Count`]: ObjectToGraphList[key].mongooseResolvers.count(),
+    [`${key}Connection`]: ObjectToGraphList[key].mongooseResolvers.connection(),
+    [`${key}Pagination`]: ObjectToGraphList[key].mongooseResolvers.pagination(),
   });
 
   schemaComposer.Mutation.addFields({
-    CompetitorCreateOne: CompetitorTC.mongooseResolvers.createOne(),
-    CompetitorCreateMany: CompetitorTC.mongooseResolvers.createMany(),
-    CompetitorUpdateById: CompetitorTC.mongooseResolvers.updateById(),
-    CompetitorUpdateOne: CompetitorTC.mongooseResolvers.updateOne(),
-    CompetitorUpdateMany: CompetitorTC.mongooseResolvers.updateMany(),
-    CompetitorRemoveById: CompetitorTC.mongooseResolvers.removeById(),
-    CompetitorRemoveOne: CompetitorTC.mongooseResolvers.removeOne(),
-    CompetitorRemoveMany: CompetitorTC.mongooseResolvers.removeMany(),
+    [`${key}CreateOne`]: ObjectToGraphList[key].mongooseResolvers.createOne(),
+    [`${key}CreateMany`]: ObjectToGraphList[key].mongooseResolvers.createMany(),
+    [`${key}UpdateById`]: ObjectToGraphList[key].mongooseResolvers.updateById(),
+    [`${key}UpdateOne`]: ObjectToGraphList[key].mongooseResolvers.updateOne(),
+    [`${key}UpdateMany`]: ObjectToGraphList[key].mongooseResolvers.updateMany(),
+    [`${key}RemoveById`]: ObjectToGraphList[key].mongooseResolvers.removeById(),
+    [`${key}RemoveOne`]: ObjectToGraphList[key].mongooseResolvers.removeOne(),
+    [`${key}RemoveMany`]: ObjectToGraphList[key].mongooseResolvers.removeMany(),
   });
+}
 
 const schema = schemaComposer.buildSchema();
 module.exports = schema;

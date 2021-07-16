@@ -17,7 +17,7 @@ const queryPostType = new GraphQLObjectType({
         Clubs: {
             type: ClubType,
             args: {
-                name: {type: GraphQLNonNull(GraphQLString)}
+                name: { type: GraphQLNonNull(GraphQLString) }
             }
         }
     },

@@ -2,7 +2,7 @@ mongoose = require('mongoose');
 var composeMongoose = require('graphql-compose-mongoose');
 var schemaComposer = require('graphql-compose');
 var UniqueValidator = require('mongoose-unique-validator');
-var CompetitorSchema = require('./ClubSchema');
+var CompetitorSchema = require('./CompetitorSchema');
 
 const ClubSchema = new mongoose.Schema({
     name: { 

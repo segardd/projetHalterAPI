@@ -182,6 +182,74 @@ type Query {
     filter: FilterFindManyCompetitorInput
     sort: SortFindManyCompetitorInput
   ): CompetitorPagination
+  CompetitionById(_id: MongoID!): Competition
+  CompetitionByIds(_ids: [MongoID!]!, limit: Int = 100, sort: SortFindByIdsCompetitionInput): [Competition!]!
+  CompetitionOne(
+    """Filter by fields"""
+    filter: FilterFindOneCompetitionInput
+    skip: Int
+    sort: SortFindOneCompetitionInput
+  ): Competition
+  CompetitionMany(
+    """Filter by fields"""
+    filter: FilterFindManyCompetitionInput
+    skip: Int
+    limit: Int = 100
+    sort: SortFindManyCompetitionInput
+  ): [Competition!]!
+  CompetitionDataLoader(_id: MongoID!): Competition
+  CompetitionDataLoaderMany(_ids: [MongoID!]!): [Competition]!
+  CompetitionByIdLean(_id: MongoID!): Competition
+  CompetitionByIdsLean(_ids: [MongoID!]!, limit: Int = 100, sort: SortFindByIdsCompetitionInput): [Competition!]!
+  CompetitionOneLean(
+    """Filter by fields"""
+    filter: FilterFindOneCompetitionInput
+    skip: Int
+    sort: SortFindOneCompetitionInput
+  ): Competition
+  CompetitionManyLean(
+    """Filter by fields"""
+    filter: FilterFindManyCompetitionInput
+    skip: Int
+    limit: Int = 100
+    sort: SortFindManyCompetitionInput
+  ): [Competition!]!
+  CompetitionDataLoaderLean(_id: MongoID!): Competition
+  CompetitionDataLoaderManyLean(_ids: [MongoID!]!): [Competition]!
+  CompetitionCount(
+    """Filter by fields"""
+    filter: FilterCountCompetitionInput
+  ): Int
+  CompetitionConnection(
+    """Forward pagination argument for returning at most first edges"""
+    first: Int
+
+    """Forward pagination argument for returning at most first edges"""
+    after: String
+
+    """Backward pagination argument for returning at most last edges"""
+    last: Int
+
+    """Backward pagination argument for returning at most last edges"""
+    before: String
+
+    """Filter by fields"""
+    filter: FilterFindManyCompetitionInput
+
+    """Sort argument for data ordering"""
+    sort: SortConnectionCompetitionEnum = _ID_DESC
+  ): CompetitionConnection
+  CompetitionPagination(
+    """Page number for displaying"""
+    page: Int
+
+    """"""
+    perPage: Int = 20
+
+    """Filter by fields"""
+    filter: FilterFindManyCompetitionInput
+    sort: SortFindManyCompetitionInput
+  ): CompetitionPagination
 }
 
 type Club {
@@ -201,15 +269,22 @@ scalar MongoID
 
 type Competitor {
   id: MongoID
+  sex: EnumCompetitorSex
   name: String
   firstname: String
   birthday: Date
+  weight: Float
   club: MongoID
   firstAttempt: Float
   secondAttempt: Float
   thirdAttempt: Float
   _id: MongoID!
   clubInfo: Club
+}
+
+enum EnumCompetitorSex {
+  M
+  F
 }
 
 scalar Date
@@ -394,9 +469,11 @@ type PaginationInfo {
 """"""
 input FilterFindOneCompetitorInput {
   id: MongoID
+  sex: EnumCompetitorSex
   name: String
   firstname: String
   birthday: Date
+  weight: Float
   club: MongoID
   firstAttempt: Float
   secondAttempt: Float
@@ -447,9 +524,11 @@ enum SortFindOneCompetitorInput {
 """"""
 input FilterFindManyCompetitorInput {
   id: MongoID
+  sex: EnumCompetitorSex
   name: String
   firstname: String
   birthday: Date
+  weight: Float
   club: MongoID
   firstAttempt: Float
   secondAttempt: Float
@@ -500,9 +579,11 @@ enum SortFindManyCompetitorInput {
 """"""
 input FilterCountCompetitorInput {
   id: MongoID
+  sex: EnumCompetitorSex
   name: String
   firstname: String
   birthday: Date
+  weight: Float
   club: MongoID
   firstAttempt: Float
   secondAttempt: Float
@@ -576,6 +657,397 @@ type CompetitorPagination {
 
   """Array of objects."""
   items: [Competitor!]
+
+  """Information to aid in pagination."""
+  pageInfo: PaginationInfo!
+}
+
+type Competition {
+  id: MongoID
+  place: String
+  date: Date
+  responsible: String
+  judges: CompetitionJudges
+  competitors: [CompetitionCompetitors]
+  _id: MongoID!
+}
+
+type CompetitionJudges {
+  left: CompetitionJudgesLeft
+  middle: CompetitionJudgesLeft
+  right: CompetitionJudgesLeft
+}
+
+type CompetitionJudgesLeft {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  _id: MongoID
+}
+
+type CompetitionCompetitors {
+  competitor: MongoID
+  weightOfTheDay: Float
+  snatch: CompetitionCompetitorsSnatch
+  cleanJerk: CompetitionCompetitorsCleanJerk
+  _id: MongoID
+}
+
+type CompetitionCompetitorsSnatch {
+  first: CompetitionCompetitorsSnatchFirst
+  second: CompetitionCompetitorsSnatchFirst
+  third: CompetitionCompetitorsSnatchFirst
+}
+
+type CompetitionCompetitorsSnatchFirst {
+  weight: Float
+  decision: CompetitionCompetitorsSnatchFirstDecision
+  _id: MongoID
+}
+
+type CompetitionCompetitorsSnatchFirstDecision {
+  left: Boolean
+  middle: Boolean
+  right: Boolean
+}
+
+type CompetitionCompetitorsCleanJerk {
+  first: CompetitionCompetitorsSnatchFirst
+  second: CompetitionCompetitorsSnatchFirst
+  third: CompetitionCompetitorsSnatchFirst
+}
+
+enum SortFindByIdsCompetitionInput {
+  _ID_ASC
+  _ID_DESC
+  ID_ASC
+  ID_DESC
+}
+
+""""""
+input FilterFindOneCompetitionInput {
+  id: MongoID
+  place: String
+  date: Date
+  responsible: String
+  judges: FilterFindOneCompetitionJudgesInput
+  competitors: [FilterFindOneCompetitionCompetitorsInput]
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterFindOneCompetitionOperatorsInput
+  OR: [FilterFindOneCompetitionInput!]
+  AND: [FilterFindOneCompetitionInput!]
+}
+
+""""""
+input FilterFindOneCompetitionJudgesInput {
+  left: FilterFindOneCompetitionJudgesLeftInput
+  middle: FilterFindOneCompetitionJudgesLeftInput
+  right: FilterFindOneCompetitionJudgesLeftInput
+}
+
+""""""
+input FilterFindOneCompetitionJudgesLeftInput {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  _id: MongoID
+}
+
+""""""
+input FilterFindOneCompetitionCompetitorsInput {
+  competitor: MongoID
+  weightOfTheDay: Float
+  snatch: FilterFindOneCompetitionCompetitorsSnatchInput
+  cleanJerk: FilterFindOneCompetitionCompetitorsCleanJerkInput
+  _id: MongoID
+}
+
+""""""
+input FilterFindOneCompetitionCompetitorsSnatchInput {
+  first: FilterFindOneCompetitionCompetitorsSnatchFirstInput
+  second: FilterFindOneCompetitionCompetitorsSnatchFirstInput
+  third: FilterFindOneCompetitionCompetitorsSnatchFirstInput
+}
+
+""""""
+input FilterFindOneCompetitionCompetitorsSnatchFirstInput {
+  weight: Float
+  decision: CompetitionCompetitorsSnatchFirstDecisionInput
+  _id: MongoID
+}
+
+input CompetitionCompetitorsSnatchFirstDecisionInput {
+  left: Boolean
+  middle: Boolean
+  right: Boolean
+}
+
+""""""
+input FilterFindOneCompetitionCompetitorsCleanJerkInput {
+  first: FilterFindOneCompetitionCompetitorsSnatchFirstInput
+  second: FilterFindOneCompetitionCompetitorsSnatchFirstInput
+  third: FilterFindOneCompetitionCompetitorsSnatchFirstInput
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterFindOneCompetitionOperatorsInput {
+  id: FilterFindOneCompetitionIdOperatorsInput
+  _id: FilterFindOneCompetition_idOperatorsInput
+}
+
+input FilterFindOneCompetitionIdOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+input FilterFindOneCompetition_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortFindOneCompetitionInput {
+  _ID_ASC
+  _ID_DESC
+  ID_ASC
+  ID_DESC
+}
+
+""""""
+input FilterFindManyCompetitionInput {
+  id: MongoID
+  place: String
+  date: Date
+  responsible: String
+  judges: FilterFindManyCompetitionJudgesInput
+  competitors: [FilterFindManyCompetitionCompetitorsInput]
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterFindManyCompetitionOperatorsInput
+  OR: [FilterFindManyCompetitionInput!]
+  AND: [FilterFindManyCompetitionInput!]
+}
+
+""""""
+input FilterFindManyCompetitionJudgesInput {
+  left: FilterFindManyCompetitionJudgesLeftInput
+  middle: FilterFindManyCompetitionJudgesLeftInput
+  right: FilterFindManyCompetitionJudgesLeftInput
+}
+
+""""""
+input FilterFindManyCompetitionJudgesLeftInput {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  _id: MongoID
+}
+
+""""""
+input FilterFindManyCompetitionCompetitorsInput {
+  competitor: MongoID
+  weightOfTheDay: Float
+  snatch: FilterFindManyCompetitionCompetitorsSnatchInput
+  cleanJerk: FilterFindManyCompetitionCompetitorsCleanJerkInput
+  _id: MongoID
+}
+
+""""""
+input FilterFindManyCompetitionCompetitorsSnatchInput {
+  first: FilterFindManyCompetitionCompetitorsSnatchFirstInput
+  second: FilterFindManyCompetitionCompetitorsSnatchFirstInput
+  third: FilterFindManyCompetitionCompetitorsSnatchFirstInput
+}
+
+""""""
+input FilterFindManyCompetitionCompetitorsSnatchFirstInput {
+  weight: Float
+  decision: CompetitionCompetitorsSnatchFirstDecisionInput
+  _id: MongoID
+}
+
+""""""
+input FilterFindManyCompetitionCompetitorsCleanJerkInput {
+  first: FilterFindManyCompetitionCompetitorsSnatchFirstInput
+  second: FilterFindManyCompetitionCompetitorsSnatchFirstInput
+  third: FilterFindManyCompetitionCompetitorsSnatchFirstInput
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterFindManyCompetitionOperatorsInput {
+  id: FilterFindManyCompetitionIdOperatorsInput
+  _id: FilterFindManyCompetition_idOperatorsInput
+}
+
+input FilterFindManyCompetitionIdOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+input FilterFindManyCompetition_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortFindManyCompetitionInput {
+  _ID_ASC
+  _ID_DESC
+  ID_ASC
+  ID_DESC
+}
+
+""""""
+input FilterCountCompetitionInput {
+  id: MongoID
+  place: String
+  date: Date
+  responsible: String
+  judges: FilterCountCompetitionJudgesInput
+  competitors: [FilterCountCompetitionCompetitorsInput]
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterCountCompetitionOperatorsInput
+  OR: [FilterCountCompetitionInput!]
+  AND: [FilterCountCompetitionInput!]
+}
+
+""""""
+input FilterCountCompetitionJudgesInput {
+  left: FilterCountCompetitionJudgesLeftInput
+  middle: FilterCountCompetitionJudgesLeftInput
+  right: FilterCountCompetitionJudgesLeftInput
+}
+
+""""""
+input FilterCountCompetitionJudgesLeftInput {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  _id: MongoID
+}
+
+""""""
+input FilterCountCompetitionCompetitorsInput {
+  competitor: MongoID
+  weightOfTheDay: Float
+  snatch: FilterCountCompetitionCompetitorsSnatchInput
+  cleanJerk: FilterCountCompetitionCompetitorsCleanJerkInput
+  _id: MongoID
+}
+
+""""""
+input FilterCountCompetitionCompetitorsSnatchInput {
+  first: FilterCountCompetitionCompetitorsSnatchFirstInput
+  second: FilterCountCompetitionCompetitorsSnatchFirstInput
+  third: FilterCountCompetitionCompetitorsSnatchFirstInput
+}
+
+""""""
+input FilterCountCompetitionCompetitorsSnatchFirstInput {
+  weight: Float
+  decision: CompetitionCompetitorsSnatchFirstDecisionInput
+  _id: MongoID
+}
+
+""""""
+input FilterCountCompetitionCompetitorsCleanJerkInput {
+  first: FilterCountCompetitionCompetitorsSnatchFirstInput
+  second: FilterCountCompetitionCompetitorsSnatchFirstInput
+  third: FilterCountCompetitionCompetitorsSnatchFirstInput
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterCountCompetitionOperatorsInput {
+  id: FilterCountCompetitionIdOperatorsInput
+  _id: FilterCountCompetition_idOperatorsInput
+}
+
+input FilterCountCompetitionIdOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+input FilterCountCompetition_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+"""A connection to a list of items."""
+type CompetitionConnection {
+  """Total object count."""
+  count: Int!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """Information to aid in pagination."""
+  edges: [CompetitionEdge!]!
+}
+
+"""An edge in a connection."""
+type CompetitionEdge {
+  """The item at the end of the edge"""
+  node: Competition!
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+enum SortConnectionCompetitionEnum {
+  _ID_DESC
+  _ID_ASC
+}
+
+"""List of items with pagination."""
+type CompetitionPagination {
+  """Total object count."""
+  count: Int
+
+  """Array of objects."""
+  items: [Competition!]
 
   """Information to aid in pagination."""
   pageInfo: PaginationInfo!
@@ -707,6 +1179,69 @@ type Mutation {
     filter: FilterRemoveManyCompetitorInput!
     limit: Int = 100
   ): RemoveManyCompetitorPayload
+
+  """
+  Create one document with mongoose defaults, setters, hooks and validation
+  """
+  CompetitionCreateOne(record: CreateOneCompetitionInput!): CreateOneCompetitionPayload
+
+  """
+  Creates Many documents with mongoose defaults, setters, hooks and validation
+  """
+  CompetitionCreateMany(records: [CreateManyCompetitionInput!]!): CreateManyCompetitionPayload
+
+  """
+  Update one document: 1) Retrieve one document by findById. 2) Apply updates to mongoose document. 3) Mongoose applies defaults, setters, hooks and validation. 4) And save it.
+  """
+  CompetitionUpdateById(_id: MongoID!, record: UpdateByIdCompetitionInput!): UpdateByIdCompetitionPayload
+
+  """
+  Update one document: 1) Retrieve one document via findOne. 2) Apply updates to mongoose document. 3) Mongoose applies defaults, setters, hooks and validation. 4) And save it.
+  """
+  CompetitionUpdateOne(
+    record: UpdateOneCompetitionInput!
+
+    """Filter by fields"""
+    filter: FilterUpdateOneCompetitionInput
+    sort: SortUpdateOneCompetitionInput
+    skip: Int
+  ): UpdateOneCompetitionPayload
+
+  """
+  Update many documents without returning them: Use Query.update mongoose method. Do not apply mongoose defaults, setters, hooks and validation. 
+  """
+  CompetitionUpdateMany(
+    record: UpdateManyCompetitionInput!
+
+    """Filter by fields"""
+    filter: FilterUpdateManyCompetitionInput
+    sort: SortUpdateManyCompetitionInput
+    skip: Int
+    limit: Int = 100
+  ): UpdateManyCompetitionPayload
+
+  """
+  Remove one document: 1) Retrieve one document and remove with hooks via findByIdAndRemove. 2) Return removed document.
+  """
+  CompetitionRemoveById(_id: MongoID!): RemoveByIdCompetitionPayload
+
+  """
+  Remove one document: 1) Remove with hooks via findOneAndRemove. 2) Return removed document.
+  """
+  CompetitionRemoveOne(
+    """Filter by fields"""
+    filter: FilterRemoveOneCompetitionInput
+    sort: SortRemoveOneCompetitionInput
+  ): RemoveOneCompetitionPayload
+
+  """
+  Remove many documents without returning them: Use Query.remove mongoose method. Do not apply mongoose defaults, setters, hooks and validation. 
+  """
+  CompetitionRemoveMany(
+    """Filter by fields"""
+    filter: FilterRemoveManyCompetitionInput!
+    limit: Int = 100
+  ): RemoveManyCompetitionPayload
 }
 
 type CreateOneClubPayload {
@@ -1009,9 +1544,11 @@ type CreateOneCompetitorPayload {
 
 """"""
 input CreateOneCompetitorInput {
+  sex: EnumCompetitorSex
   name: String
   firstname: String
   birthday: Date
+  weight: Float
   club: MongoID
   firstAttempt: Float
   secondAttempt: Float
@@ -1036,9 +1573,11 @@ type CreateManyCompetitorPayload {
 
 """"""
 input CreateManyCompetitorInput {
+  sex: EnumCompetitorSex
   name: String
   firstname: String
   birthday: Date
+  weight: Float
   club: MongoID
   firstAttempt: Float
   secondAttempt: Float
@@ -1060,9 +1599,11 @@ type UpdateByIdCompetitorPayload {
 
 """"""
 input UpdateByIdCompetitorInput {
+  sex: EnumCompetitorSex
   name: String
   firstname: String
   birthday: Date
+  weight: Float
   club: MongoID
   firstAttempt: Float
   secondAttempt: Float
@@ -1084,9 +1625,11 @@ type UpdateOneCompetitorPayload {
 
 """"""
 input UpdateOneCompetitorInput {
+  sex: EnumCompetitorSex
   name: String
   firstname: String
   birthday: Date
+  weight: Float
   club: MongoID
   firstAttempt: Float
   secondAttempt: Float
@@ -1096,9 +1639,11 @@ input UpdateOneCompetitorInput {
 """"""
 input FilterUpdateOneCompetitorInput {
   id: MongoID
+  sex: EnumCompetitorSex
   name: String
   firstname: String
   birthday: Date
+  weight: Float
   club: MongoID
   firstAttempt: Float
   secondAttempt: Float
@@ -1158,9 +1703,11 @@ type UpdateManyCompetitorPayload {
 
 """"""
 input UpdateManyCompetitorInput {
+  sex: EnumCompetitorSex
   name: String
   firstname: String
   birthday: Date
+  weight: Float
   club: MongoID
   firstAttempt: Float
   secondAttempt: Float
@@ -1170,9 +1717,11 @@ input UpdateManyCompetitorInput {
 """"""
 input FilterUpdateManyCompetitorInput {
   id: MongoID
+  sex: EnumCompetitorSex
   name: String
   firstname: String
   birthday: Date
+  weight: Float
   club: MongoID
   firstAttempt: Float
   secondAttempt: Float
@@ -1249,9 +1798,11 @@ type RemoveOneCompetitorPayload {
 """"""
 input FilterRemoveOneCompetitorInput {
   id: MongoID
+  sex: EnumCompetitorSex
   name: String
   firstname: String
   birthday: Date
+  weight: Float
   club: MongoID
   firstAttempt: Float
   secondAttempt: Float
@@ -1312,9 +1863,11 @@ type RemoveManyCompetitorPayload {
 """"""
 input FilterRemoveManyCompetitorInput {
   id: MongoID
+  sex: EnumCompetitorSex
   name: String
   firstname: String
   birthday: Date
+  weight: Float
   club: MongoID
   firstAttempt: Float
   secondAttempt: Float
@@ -1345,6 +1898,711 @@ input FilterRemoveManyCompetitorIdOperatorsInput {
 }
 
 input FilterRemoveManyCompetitor_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+type CreateOneCompetitionPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Created document"""
+  record: Competition
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input CreateOneCompetitionInput {
+  place: String
+  date: Date
+  responsible: String
+  judges: CompetitionJudgesInput
+  competitors: [CompetitionCompetitorsInput]
+}
+
+input CompetitionJudgesInput {
+  left: CompetitionJudgesLeftInput
+  middle: CompetitionJudgesLeftInput
+  right: CompetitionJudgesLeftInput
+}
+
+input CompetitionJudgesLeftInput {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  _id: MongoID
+}
+
+input CompetitionCompetitorsInput {
+  competitor: MongoID
+  weightOfTheDay: Float
+  snatch: CompetitionCompetitorsSnatchInput
+  cleanJerk: CompetitionCompetitorsCleanJerkInput
+  _id: MongoID
+}
+
+input CompetitionCompetitorsSnatchInput {
+  first: CompetitionCompetitorsSnatchFirstInput
+  second: CompetitionCompetitorsSnatchFirstInput
+  third: CompetitionCompetitorsSnatchFirstInput
+}
+
+input CompetitionCompetitorsSnatchFirstInput {
+  weight: Float
+  decision: CompetitionCompetitorsSnatchFirstDecisionInput
+  _id: MongoID
+}
+
+input CompetitionCompetitorsCleanJerkInput {
+  first: CompetitionCompetitorsSnatchFirstInput
+  second: CompetitionCompetitorsSnatchFirstInput
+  third: CompetitionCompetitorsSnatchFirstInput
+}
+
+type CreateManyCompetitionPayload {
+  """Documents IDs"""
+  recordIds: [MongoID!]!
+
+  """Created documents"""
+  records: [Competition!]
+
+  """Number of created documents"""
+  createdCount: Int!
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input CreateManyCompetitionInput {
+  place: String
+  date: Date
+  responsible: String
+  judges: CompetitionJudgesInput
+  competitors: [CompetitionCompetitorsInput]
+}
+
+type UpdateByIdCompetitionPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Updated document"""
+  record: Competition
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input UpdateByIdCompetitionInput {
+  place: String
+  date: Date
+  responsible: String
+  judges: UpdateByIdCompetitionJudgesInput
+  competitors: [UpdateByIdCompetitionCompetitorsInput]
+}
+
+""""""
+input UpdateByIdCompetitionJudgesInput {
+  left: UpdateByIdCompetitionJudgesLeftInput
+  middle: UpdateByIdCompetitionJudgesLeftInput
+  right: UpdateByIdCompetitionJudgesLeftInput
+}
+
+""""""
+input UpdateByIdCompetitionJudgesLeftInput {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  _id: MongoID
+}
+
+""""""
+input UpdateByIdCompetitionCompetitorsInput {
+  competitor: MongoID
+  weightOfTheDay: Float
+  snatch: UpdateByIdCompetitionCompetitorsSnatchInput
+  cleanJerk: UpdateByIdCompetitionCompetitorsCleanJerkInput
+  _id: MongoID
+}
+
+""""""
+input UpdateByIdCompetitionCompetitorsSnatchInput {
+  first: UpdateByIdCompetitionCompetitorsSnatchFirstInput
+  second: UpdateByIdCompetitionCompetitorsSnatchFirstInput
+  third: UpdateByIdCompetitionCompetitorsSnatchFirstInput
+}
+
+""""""
+input UpdateByIdCompetitionCompetitorsSnatchFirstInput {
+  weight: Float
+  decision: CompetitionCompetitorsSnatchFirstDecisionInput
+  _id: MongoID
+}
+
+""""""
+input UpdateByIdCompetitionCompetitorsCleanJerkInput {
+  first: UpdateByIdCompetitionCompetitorsSnatchFirstInput
+  second: UpdateByIdCompetitionCompetitorsSnatchFirstInput
+  third: UpdateByIdCompetitionCompetitorsSnatchFirstInput
+}
+
+type UpdateOneCompetitionPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Updated document"""
+  record: Competition
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input UpdateOneCompetitionInput {
+  place: String
+  date: Date
+  responsible: String
+  judges: UpdateOneCompetitionJudgesInput
+  competitors: [UpdateOneCompetitionCompetitorsInput]
+}
+
+""""""
+input UpdateOneCompetitionJudgesInput {
+  left: UpdateOneCompetitionJudgesLeftInput
+  middle: UpdateOneCompetitionJudgesLeftInput
+  right: UpdateOneCompetitionJudgesLeftInput
+}
+
+""""""
+input UpdateOneCompetitionJudgesLeftInput {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  _id: MongoID
+}
+
+""""""
+input UpdateOneCompetitionCompetitorsInput {
+  competitor: MongoID
+  weightOfTheDay: Float
+  snatch: UpdateOneCompetitionCompetitorsSnatchInput
+  cleanJerk: UpdateOneCompetitionCompetitorsCleanJerkInput
+  _id: MongoID
+}
+
+""""""
+input UpdateOneCompetitionCompetitorsSnatchInput {
+  first: UpdateOneCompetitionCompetitorsSnatchFirstInput
+  second: UpdateOneCompetitionCompetitorsSnatchFirstInput
+  third: UpdateOneCompetitionCompetitorsSnatchFirstInput
+}
+
+""""""
+input UpdateOneCompetitionCompetitorsSnatchFirstInput {
+  weight: Float
+  decision: CompetitionCompetitorsSnatchFirstDecisionInput
+  _id: MongoID
+}
+
+""""""
+input UpdateOneCompetitionCompetitorsCleanJerkInput {
+  first: UpdateOneCompetitionCompetitorsSnatchFirstInput
+  second: UpdateOneCompetitionCompetitorsSnatchFirstInput
+  third: UpdateOneCompetitionCompetitorsSnatchFirstInput
+}
+
+""""""
+input FilterUpdateOneCompetitionInput {
+  id: MongoID
+  place: String
+  date: Date
+  responsible: String
+  judges: FilterUpdateOneCompetitionJudgesInput
+  competitors: [FilterUpdateOneCompetitionCompetitorsInput]
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterUpdateOneCompetitionOperatorsInput
+  OR: [FilterUpdateOneCompetitionInput!]
+  AND: [FilterUpdateOneCompetitionInput!]
+}
+
+""""""
+input FilterUpdateOneCompetitionJudgesInput {
+  left: FilterUpdateOneCompetitionJudgesLeftInput
+  middle: FilterUpdateOneCompetitionJudgesLeftInput
+  right: FilterUpdateOneCompetitionJudgesLeftInput
+}
+
+""""""
+input FilterUpdateOneCompetitionJudgesLeftInput {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  _id: MongoID
+}
+
+""""""
+input FilterUpdateOneCompetitionCompetitorsInput {
+  competitor: MongoID
+  weightOfTheDay: Float
+  snatch: FilterUpdateOneCompetitionCompetitorsSnatchInput
+  cleanJerk: FilterUpdateOneCompetitionCompetitorsCleanJerkInput
+  _id: MongoID
+}
+
+""""""
+input FilterUpdateOneCompetitionCompetitorsSnatchInput {
+  first: FilterUpdateOneCompetitionCompetitorsSnatchFirstInput
+  second: FilterUpdateOneCompetitionCompetitorsSnatchFirstInput
+  third: FilterUpdateOneCompetitionCompetitorsSnatchFirstInput
+}
+
+""""""
+input FilterUpdateOneCompetitionCompetitorsSnatchFirstInput {
+  weight: Float
+  decision: CompetitionCompetitorsSnatchFirstDecisionInput
+  _id: MongoID
+}
+
+""""""
+input FilterUpdateOneCompetitionCompetitorsCleanJerkInput {
+  first: FilterUpdateOneCompetitionCompetitorsSnatchFirstInput
+  second: FilterUpdateOneCompetitionCompetitorsSnatchFirstInput
+  third: FilterUpdateOneCompetitionCompetitorsSnatchFirstInput
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterUpdateOneCompetitionOperatorsInput {
+  id: FilterUpdateOneCompetitionIdOperatorsInput
+  _id: FilterUpdateOneCompetition_idOperatorsInput
+}
+
+input FilterUpdateOneCompetitionIdOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+input FilterUpdateOneCompetition_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortUpdateOneCompetitionInput {
+  _ID_ASC
+  _ID_DESC
+  ID_ASC
+  ID_DESC
+}
+
+type UpdateManyCompetitionPayload {
+  """Affected documents number"""
+  numAffected: Int
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input UpdateManyCompetitionInput {
+  place: String
+  date: Date
+  responsible: String
+  judges: UpdateManyCompetitionJudgesInput
+  competitors: [UpdateManyCompetitionCompetitorsInput]
+}
+
+""""""
+input UpdateManyCompetitionJudgesInput {
+  left: UpdateManyCompetitionJudgesLeftInput
+  middle: UpdateManyCompetitionJudgesLeftInput
+  right: UpdateManyCompetitionJudgesLeftInput
+}
+
+""""""
+input UpdateManyCompetitionJudgesLeftInput {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  _id: MongoID
+}
+
+""""""
+input UpdateManyCompetitionCompetitorsInput {
+  competitor: MongoID
+  weightOfTheDay: Float
+  snatch: UpdateManyCompetitionCompetitorsSnatchInput
+  cleanJerk: UpdateManyCompetitionCompetitorsCleanJerkInput
+  _id: MongoID
+}
+
+""""""
+input UpdateManyCompetitionCompetitorsSnatchInput {
+  first: UpdateManyCompetitionCompetitorsSnatchFirstInput
+  second: UpdateManyCompetitionCompetitorsSnatchFirstInput
+  third: UpdateManyCompetitionCompetitorsSnatchFirstInput
+}
+
+""""""
+input UpdateManyCompetitionCompetitorsSnatchFirstInput {
+  weight: Float
+  decision: CompetitionCompetitorsSnatchFirstDecisionInput
+  _id: MongoID
+}
+
+""""""
+input UpdateManyCompetitionCompetitorsCleanJerkInput {
+  first: UpdateManyCompetitionCompetitorsSnatchFirstInput
+  second: UpdateManyCompetitionCompetitorsSnatchFirstInput
+  third: UpdateManyCompetitionCompetitorsSnatchFirstInput
+}
+
+""""""
+input FilterUpdateManyCompetitionInput {
+  id: MongoID
+  place: String
+  date: Date
+  responsible: String
+  judges: FilterUpdateManyCompetitionJudgesInput
+  competitors: [FilterUpdateManyCompetitionCompetitorsInput]
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterUpdateManyCompetitionOperatorsInput
+  OR: [FilterUpdateManyCompetitionInput!]
+  AND: [FilterUpdateManyCompetitionInput!]
+}
+
+""""""
+input FilterUpdateManyCompetitionJudgesInput {
+  left: FilterUpdateManyCompetitionJudgesLeftInput
+  middle: FilterUpdateManyCompetitionJudgesLeftInput
+  right: FilterUpdateManyCompetitionJudgesLeftInput
+}
+
+""""""
+input FilterUpdateManyCompetitionJudgesLeftInput {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  _id: MongoID
+}
+
+""""""
+input FilterUpdateManyCompetitionCompetitorsInput {
+  competitor: MongoID
+  weightOfTheDay: Float
+  snatch: FilterUpdateManyCompetitionCompetitorsSnatchInput
+  cleanJerk: FilterUpdateManyCompetitionCompetitorsCleanJerkInput
+  _id: MongoID
+}
+
+""""""
+input FilterUpdateManyCompetitionCompetitorsSnatchInput {
+  first: FilterUpdateManyCompetitionCompetitorsSnatchFirstInput
+  second: FilterUpdateManyCompetitionCompetitorsSnatchFirstInput
+  third: FilterUpdateManyCompetitionCompetitorsSnatchFirstInput
+}
+
+""""""
+input FilterUpdateManyCompetitionCompetitorsSnatchFirstInput {
+  weight: Float
+  decision: CompetitionCompetitorsSnatchFirstDecisionInput
+  _id: MongoID
+}
+
+""""""
+input FilterUpdateManyCompetitionCompetitorsCleanJerkInput {
+  first: FilterUpdateManyCompetitionCompetitorsSnatchFirstInput
+  second: FilterUpdateManyCompetitionCompetitorsSnatchFirstInput
+  third: FilterUpdateManyCompetitionCompetitorsSnatchFirstInput
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterUpdateManyCompetitionOperatorsInput {
+  id: FilterUpdateManyCompetitionIdOperatorsInput
+  _id: FilterUpdateManyCompetition_idOperatorsInput
+}
+
+input FilterUpdateManyCompetitionIdOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+input FilterUpdateManyCompetition_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortUpdateManyCompetitionInput {
+  _ID_ASC
+  _ID_DESC
+  ID_ASC
+  ID_DESC
+}
+
+type RemoveByIdCompetitionPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Removed document"""
+  record: Competition
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+type RemoveOneCompetitionPayload {
+  """Document ID"""
+  recordId: MongoID
+
+  """Removed document"""
+  record: Competition
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input FilterRemoveOneCompetitionInput {
+  id: MongoID
+  place: String
+  date: Date
+  responsible: String
+  judges: FilterRemoveOneCompetitionJudgesInput
+  competitors: [FilterRemoveOneCompetitionCompetitorsInput]
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterRemoveOneCompetitionOperatorsInput
+  OR: [FilterRemoveOneCompetitionInput!]
+  AND: [FilterRemoveOneCompetitionInput!]
+}
+
+""""""
+input FilterRemoveOneCompetitionJudgesInput {
+  left: FilterRemoveOneCompetitionJudgesLeftInput
+  middle: FilterRemoveOneCompetitionJudgesLeftInput
+  right: FilterRemoveOneCompetitionJudgesLeftInput
+}
+
+""""""
+input FilterRemoveOneCompetitionJudgesLeftInput {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  _id: MongoID
+}
+
+""""""
+input FilterRemoveOneCompetitionCompetitorsInput {
+  competitor: MongoID
+  weightOfTheDay: Float
+  snatch: FilterRemoveOneCompetitionCompetitorsSnatchInput
+  cleanJerk: FilterRemoveOneCompetitionCompetitorsCleanJerkInput
+  _id: MongoID
+}
+
+""""""
+input FilterRemoveOneCompetitionCompetitorsSnatchInput {
+  first: FilterRemoveOneCompetitionCompetitorsSnatchFirstInput
+  second: FilterRemoveOneCompetitionCompetitorsSnatchFirstInput
+  third: FilterRemoveOneCompetitionCompetitorsSnatchFirstInput
+}
+
+""""""
+input FilterRemoveOneCompetitionCompetitorsSnatchFirstInput {
+  weight: Float
+  decision: CompetitionCompetitorsSnatchFirstDecisionInput
+  _id: MongoID
+}
+
+""""""
+input FilterRemoveOneCompetitionCompetitorsCleanJerkInput {
+  first: FilterRemoveOneCompetitionCompetitorsSnatchFirstInput
+  second: FilterRemoveOneCompetitionCompetitorsSnatchFirstInput
+  third: FilterRemoveOneCompetitionCompetitorsSnatchFirstInput
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterRemoveOneCompetitionOperatorsInput {
+  id: FilterRemoveOneCompetitionIdOperatorsInput
+  _id: FilterRemoveOneCompetition_idOperatorsInput
+}
+
+input FilterRemoveOneCompetitionIdOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+input FilterRemoveOneCompetition_idOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+enum SortRemoveOneCompetitionInput {
+  _ID_ASC
+  _ID_DESC
+  ID_ASC
+  ID_DESC
+}
+
+type RemoveManyCompetitionPayload {
+  """Affected documents number"""
+  numAffected: Int
+
+  """
+  Error that may occur during operation. If you request this field in GraphQL query, you will receive typed error in payload; otherwise error will be provided in root `errors` field of GraphQL response.
+  """
+  error: ErrorInterface
+}
+
+""""""
+input FilterRemoveManyCompetitionInput {
+  id: MongoID
+  place: String
+  date: Date
+  responsible: String
+  judges: FilterRemoveManyCompetitionJudgesInput
+  competitors: [FilterRemoveManyCompetitionCompetitorsInput]
+  _id: MongoID
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: FilterRemoveManyCompetitionOperatorsInput
+  OR: [FilterRemoveManyCompetitionInput!]
+  AND: [FilterRemoveManyCompetitionInput!]
+}
+
+""""""
+input FilterRemoveManyCompetitionJudgesInput {
+  left: FilterRemoveManyCompetitionJudgesLeftInput
+  middle: FilterRemoveManyCompetitionJudgesLeftInput
+  right: FilterRemoveManyCompetitionJudgesLeftInput
+}
+
+""""""
+input FilterRemoveManyCompetitionJudgesLeftInput {
+  name: String
+  firstname: String
+  birthday: Date
+  club: MongoID
+  _id: MongoID
+}
+
+""""""
+input FilterRemoveManyCompetitionCompetitorsInput {
+  competitor: MongoID
+  weightOfTheDay: Float
+  snatch: FilterRemoveManyCompetitionCompetitorsSnatchInput
+  cleanJerk: FilterRemoveManyCompetitionCompetitorsCleanJerkInput
+  _id: MongoID
+}
+
+""""""
+input FilterRemoveManyCompetitionCompetitorsSnatchInput {
+  first: FilterRemoveManyCompetitionCompetitorsSnatchFirstInput
+  second: FilterRemoveManyCompetitionCompetitorsSnatchFirstInput
+  third: FilterRemoveManyCompetitionCompetitorsSnatchFirstInput
+}
+
+""""""
+input FilterRemoveManyCompetitionCompetitorsSnatchFirstInput {
+  weight: Float
+  decision: CompetitionCompetitorsSnatchFirstDecisionInput
+  _id: MongoID
+}
+
+""""""
+input FilterRemoveManyCompetitionCompetitorsCleanJerkInput {
+  first: FilterRemoveManyCompetitionCompetitorsSnatchFirstInput
+  second: FilterRemoveManyCompetitionCompetitorsSnatchFirstInput
+  third: FilterRemoveManyCompetitionCompetitorsSnatchFirstInput
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input FilterRemoveManyCompetitionOperatorsInput {
+  id: FilterRemoveManyCompetitionIdOperatorsInput
+  _id: FilterRemoveManyCompetition_idOperatorsInput
+}
+
+input FilterRemoveManyCompetitionIdOperatorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+  exists: Boolean
+}
+
+input FilterRemoveManyCompetition_idOperatorsInput {
   gt: MongoID
   gte: MongoID
   lt: MongoID

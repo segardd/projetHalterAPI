@@ -9,6 +9,9 @@ const fs = require('fs-extra');
 var schema = require('./api/resolvers/objectsToGraphQL');
 var { introspectionQuery, printSchema } = require('graphql/utilities');
 var app = express();
+var cors = require('cors')
+app.use(cors());
+
 
 mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true }, { useUnifiedTopology: true })
     .then(console.log('mongoose.connect: cleared')).catch(function (err) { console.error(err) });
