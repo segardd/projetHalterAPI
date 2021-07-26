@@ -10,7 +10,7 @@ const ClubSchema = new mongoose.Schema({
     },
     director : {type: String},
     description : {type: String},
-    createDate : {type: String},
+    createdDate : {type: String},
     members: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Competitor"

@@ -256,7 +256,7 @@ type Club {
   name: String
   director: String
   description: String
-  createDate: String
+  createdDate: String
   members: [MongoID]
   _id: MongoID!
   membersDetails(limit: Int = 100, sort: SortFindByIdsCompetitorInput): [Competitor!]!
@@ -306,7 +306,7 @@ input FilterFindOneClubInput {
   name: String
   director: String
   description: String
-  createDate: String
+  createdDate: String
   members: [MongoID]
   _id: MongoID
 
@@ -342,7 +342,7 @@ input FilterFindManyClubInput {
   name: String
   director: String
   description: String
-  createDate: String
+  createdDate: String
   members: [MongoID]
   _id: MongoID
 
@@ -378,7 +378,7 @@ input FilterCountClubInput {
   name: String
   director: String
   description: String
-  createDate: String
+  createdDate: String
   members: [MongoID]
   _id: MongoID
 
@@ -1262,7 +1262,7 @@ input CreateOneClubInput {
   name: String
   director: String
   description: String
-  createDate: String
+  createdDate: String
   members: [MongoID]
 }
 
@@ -1287,7 +1287,7 @@ input CreateManyClubInput {
   name: String
   director: String
   description: String
-  createDate: String
+  createdDate: String
   members: [MongoID]
 }
 
@@ -1309,7 +1309,7 @@ input UpdateByIdClubInput {
   name: String
   director: String
   description: String
-  createDate: String
+  createdDate: String
   members: [MongoID]
 }
 
@@ -1331,7 +1331,7 @@ input UpdateOneClubInput {
   name: String
   director: String
   description: String
-  createDate: String
+  createdDate: String
   members: [MongoID]
 }
 
@@ -1340,7 +1340,7 @@ input FilterUpdateOneClubInput {
   name: String
   director: String
   description: String
-  createDate: String
+  createdDate: String
   members: [MongoID]
   _id: MongoID
 
@@ -1386,7 +1386,7 @@ input UpdateManyClubInput {
   name: String
   director: String
   description: String
-  createDate: String
+  createdDate: String
   members: [MongoID]
 }
 
@@ -1395,7 +1395,7 @@ input FilterUpdateManyClubInput {
   name: String
   director: String
   description: String
-  createDate: String
+  createdDate: String
   members: [MongoID]
   _id: MongoID
 
@@ -1457,7 +1457,7 @@ input FilterRemoveOneClubInput {
   name: String
   director: String
   description: String
-  createDate: String
+  createdDate: String
   members: [MongoID]
   _id: MongoID
 
@@ -1503,7 +1503,7 @@ input FilterRemoveManyClubInput {
   name: String
   director: String
   description: String
-  createDate: String
+  createdDate: String
   members: [MongoID]
   _id: MongoID
 
